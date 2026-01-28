@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { uploadAudio } from '../service/audioApi';
+import { uploadAudio } from '../../services/audioApi';
 import { Upload } from 'lucide-react';
 
 type Props = {

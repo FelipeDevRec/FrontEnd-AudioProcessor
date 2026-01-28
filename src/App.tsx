@@ -1,62 +1,72 @@
-import { useEffect, useState } from 'react';
-import { AudioUpload } from './components/AudioUpload';
-import { AudioList, type AudioFile } from './components/AudioList';
-import { listAudios } from './service/audioApi';
-import { Music } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { AudioUpload } from './components/AudioUpload/AudioUpload';
+import { AudioList } from './components/AudioList/AudioList';;
+import { listAudios } from './services/audioApi';
+import type { AudioFile } from './types/audio';
 import { MainLayout } from './layouts/MainLayout';
+import { ToastContainer } from 'react-toastify';
 
-function App() {
+/**
+ * Componente principal da aplicação
+ * Gerencia o estado geral e integra todos os componentes
+ */
+export default function App() {
   const [audios, setAudios] = useState<AudioFile[]>([]);
   const [loading, setLoading] = useState(false);
 
+  /**
+   * Busca a lista de áudios do servidor
+   */
   const fetchAudios = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
       const data = await listAudios();
       setAudios(data);
     } catch (error) {
-      console.error('Erro ao buscar áudios', error);
+      console.error('Erro ao carregar áudios:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Executa ao montar o componente
+   */
   useEffect(() => {
     fetchAudios();
   }, []);
 
+  /**
+   * Handler para quando um áudio é enviado com sucesso
+   */
+  const handleUploadSuccess = () => {
+    fetchAudios();
+  };
+
   return (
     <MainLayout>
-      <div className="py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center justify-center mb-10">
-            <Music className="w-10 h-10 text-blue-600 mr-3" />
-            <h1 className="text-3xl font-extrabold text-gray-900">♫ Audio Processor</h1>
-          </div>
+      <ToastContainer/>
+      {/* Seção de Upload */}
+      <section className="grid gap-8">
+        <AudioUpload onUploadSuccess={handleUploadSuccess} />
+      </section>
 
-          <div className="grid gap-8">
-            <section>
-              <AudioUpload onUploadSuccess={fetchAudios} />
-            </section>
-
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold text-gray-700">Arquivos Processados</h2>
-                <button
-                  onClick={fetchAudios}
-                  className="text-sm text-blue-600 hover:text-blue-800 font-medium disabled:opacity-50"
-                  disabled={loading}
-                >
-                  {loading ? 'Atualizando...' : 'Atualizar Lista'}
-                </button>
-              </div>
-              <AudioList audios={audios} onChange={fetchAudios} />
-            </section>
-          </div>
+      {/* Seção de Lista */}
+      <section className="grid gap-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold text-gray-700">
+            Arquivos Processados
+          </h2>
+          <button
+            onClick={fetchAudios}
+            disabled={loading}
+            className="px-4 py-2 bg-blue-600 text-white rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-all"
+          >
+            {loading ? 'Atualizando...' : 'Atualizar Lista'}
+          </button>
         </div>
-      </div>
+        <AudioList audios={audios} onChange={fetchAudios} />
+      </section>
     </MainLayout>
   );
 }
-
-export default App;
