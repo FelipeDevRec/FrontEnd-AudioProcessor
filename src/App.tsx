@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { AudioUpload } from './components/AudioUpload/AudioUpload';
-import { AudioList } from './components/AudioList/AudioList';;
+import { AudioList } from './components/AudioList/AudioList';
 import { listAudios } from './services/audioApi';
 import type { AudioFile } from './types/audio';
 import { MainLayout } from './layouts/MainLayout';
@@ -45,14 +45,15 @@ export default function App() {
 
   return (
     <MainLayout>
-      <ToastContainer/>
+      <ToastContainer />
+
       {/* Seção de Upload */}
       <section className="grid gap-8">
         <AudioUpload onUploadSuccess={handleUploadSuccess} />
       </section>
 
       {/* Seção de Lista */}
-      <section className="grid gap-8">
+      <section className="grid gap-8 mt-10">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold text-gray-700">
             Arquivos Processados
@@ -65,6 +66,7 @@ export default function App() {
             {loading ? 'Atualizando...' : 'Atualizar Lista'}
           </button>
         </div>
+
         <AudioList audios={audios} onChange={fetchAudios} />
       </section>
     </MainLayout>
