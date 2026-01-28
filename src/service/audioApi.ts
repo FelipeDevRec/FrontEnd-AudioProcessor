@@ -1,12 +1,24 @@
-// src/services/audioApi.ts
 const API_BASE_URL = 'http://localhost:8080';
 
 export type AudioFile = {
   id: number;
-  fileName: string;
+  originalFilename: string;
   status: string;
   format: string;
 };
+
+export type AudioSummaryData = {
+  id: number;
+  audioId: number;
+  summary: string;
+  extractionTimeMs: number;
+  extractedAt: string;
+  isTruncated: boolean;
+  processingTime: string;
+  status: string;
+  summaryLength: number;
+};
+
 
 export async function uploadAudio(file: File): Promise<AudioFile> {
   const formData = new FormData();
@@ -48,4 +60,12 @@ export async function summarizeAudio(id: number): Promise<void> {
   if (!resp.ok) {
     throw new Error('Falha ao resumir áudio');
   }
+}
+
+export async function getSummary(id: number): Promise<AudioSummaryData> {
+  const resp = await fetch(`${API_BASE_URL}/api/audio/${id}/summary`);
+  if (!resp.ok) {
+    throw new Error('Falha ao buscar resumo');
+  }
+  return resp.json();
 }
