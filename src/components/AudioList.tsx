@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { compressAudio, summarizeAudio, getSummary, type AudioSummaryData } from '../service/audioApi';
 import { Zap, MessageCircle, Eye, X } from 'lucide-react';
 
